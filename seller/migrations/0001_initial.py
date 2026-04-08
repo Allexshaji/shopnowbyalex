@@ -1,0 +1,67 @@
+
+
+import django.db.models.deletion
+from django.conf import settings
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+
+    initial = True
+
+    dependencies = [
+        ('core', '0001_initial'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
+
+    operations = [
+        migrations.CreateModel(
+            name='Category',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('name', models.CharField(max_length=30)),
+                ('slug', models.SlugField(blank=True, unique=True)),
+                ('image', models.ImageField(blank=True, null=True, upload_to='category_icons/')),
+                ('description', models.TextField(blank=True)),
+                ('is_active', models.BooleanField(default=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='ProductImage',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('image', models.ImageField(upload_to='product_images/')),
+                ('is_primary', models.BooleanField(default=False)),
+                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.product')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='SellerProfile',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('shop_name', models.CharField(max_length=100)),
+                ('address', models.TextField()),
+                ('pincode', models.CharField(max_length=6)),
+                ('state', models.CharField(max_length=100)),
+                ('city', models.CharField(max_length=100)),
+                ('gst_number', models.CharField(blank=True, max_length=100, null=True)),
+                ('is_verified', models.BooleanField(default=False)),
+                ('is_active', models.BooleanField(default=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
+                ('approved', models.BooleanField(default=False)),
+                ('shop_logo', models.ImageField(null=True, upload_to='seller_profile_pic/')),
+                ('user', models.OneToOneField(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='seller_profile', to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='SubCategory',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('name', models.CharField(max_length=100)),
+                ('is_active', models.BooleanField(default=True)),
+                ('slug', models.SlugField(blank=True, unique=True)),
+                ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='seller.category')),
+            ],
+        ),
+    ]

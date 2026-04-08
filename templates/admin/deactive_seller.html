@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | Deactivated Sellers</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style type="text/tailwindcss">
+        @layer components {
+            .table-head {
+                @apply px-6 py-4 text-left text-[11px] font-bold text-slate-400 uppercase tracking-[0.15em] bg-slate-50/50 border-b border-slate-100;
+            }
+            .status-badge {
+                @apply px-2.5 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider;
+            }
+            .badge-deactivated { @apply bg-rose-50 text-rose-700 border-rose-100; }
+            
+            .btn-action {
+                @apply w-9 h-9 flex items-center justify-center rounded-xl border transition-all duration-200 shadow-sm bg-white text-slate-400;
+            }
+        }
+    </style>
+</head>
+<body class="bg-[#f8fafc] text-slate-900 antialiased font-sans flex min-h-screen">
+
+    <aside class="w-64 bg-white border-r border-slate-200 sticky top-0 h-screen overflow-y-auto z-50 flex-shrink-0">
+        {% include 'admin/admin_navbar.html' %}
+    </aside>
+
+    <main class="flex-1 min-w-0">
+        <div class="max-w-7xl mx-auto px-4 md:px-8 py-10">
+            
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
+                <div>
+                    <h1 class="text-3xl font-black tracking-tight text-slate-900 flex items-center">
+                        Deactivated Sellers
+                        <span class="ml-4 px-2 py-1 bg-rose-100 text-rose-700 text-xs rounded-lg font-bold">
+                            {{ seller|length }} Suspended
+                        </span>
+                    </h1>
+                    <p class="text-slate-500 mt-1 font-medium">Review and manage seller accounts that are currently offline.</p>
+                </div>
+
+                <div>
+                    <a href="{% url 'seller_view' %}" class="inline-flex items-center gap-2 px-4 py-2 bg-white text-slate-600 border border-slate-200 text-sm font-bold rounded-xl hover:bg-slate-50 transition-all shadow-sm">
+                        <i class="fas fa-arrow-left text-xs"></i>
+                        Back to Active Sellers
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-100">
+                        <thead>
+                            <tr>
+                                <th class="table-head">Store / Seller</th>
+                                <th class="table-head">Contact Email</th>
+                                <th class="table-head">Status</th>
+                                <th class="table-head">Joined Date</th>
+                                <th class="table-head text-right">Reactivate / Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50">
+                            {% for s in seller %}
+                            <tr class="group hover:bg-slate-50/50 transition-colors">
+                                <td class="px-6 py-5 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="h-12 w-12 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 group-hover:bg-rose-500 group-hover:text-white transition-all duration-300">
+                                            <i class="fas fa-store text-lg"></i>
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-bold text-slate-900 leading-tight">
+                                                {{ s.store_name|default:s.user.get_full_name }}
+                                            </div>
+                                            <div class="text-[11px] text-slate-400 font-medium">UID: #{{ s.id }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-5 whitespace-nowrap">
+                                    <span class="text-sm text-slate-600 font-medium">{{ s.user.email }}</span>
+                                </td>
+
+                                <td class="px-6 py-5 whitespace-nowrap">
+                                    <span class="status-badge badge-deactivated">Inactive</span>
+                                </td>
+
+                                <td class="px-6 py-5 whitespace-nowrap">
+                                    <div class="text-xs text-slate-500 font-semibold">
+                                        {{ s.created_at|date:"M d, Y"|default:"N/A" }}
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-5 whitespace-nowrap text-right">
+                                    <div class="flex justify-end items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                        
+                                        <form action="{% url 'reapprove_seller' s.id %}" method="POST" class="inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn-action hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50" title="Reactivate Store">
+                                                <i class="fas fa-undo-alt text-xs"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="px-6 py-24 text-center">
+                                    <div class="inline-flex items-center justify-center w-20 h-20 bg-slate-50 rounded-full text-slate-200 mb-4 border border-slate-100">
+                                        <i class="fas fa-user-check text-3xl"></i>
+                                    </div>
+                                    <h3 class="text-slate-900 text-lg font-bold">No Suspended Sellers</h3>
+                                    <p class="text-slate-500 text-sm mt-1 max-w-xs mx-auto">Great! All registered sellers are currently active on the platform.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,246 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipShop - Create Coupon</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary_dark: '#362F4F',
+                        primary: '#5B23FF',
+                        accent: '#008BFF',
+                        highlight: '#E4FF30',
+                        bg_light: '#F1F3F6',
+                        text_dark: '#212121',
+                        text_gray: '#878787'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F1F3F6; }
+        .card-shadow { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+        
+        /* Custom Toggle Switch Styles */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #5B23FF;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #5B23FF;
+        }
+        .toggle-checkbox {
+            right: 0;
+            z-index: 1;
+            border-color: #e5e7eb;
+            transition: all 0.3s;
+        }
+        .toggle-label {
+            background-color: #e5e7eb;
+            transition: all 0.3s;
+        }
+    </style>
+</head>
+<body class="text-text_dark flex flex-col min-h-screen">
+
+        {% include 'seller/navbar.html' %}
+
+
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-4xl">
+
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-primary_dark">Create New Coupon</h1>
+            <p class="text-gray-500 text-sm mt-1">Offer special discounts to your customers to boost sales.</p>
+        </div>
+
+        <form action="#" method="POST" class="bg-white rounded-xl card-shadow overflow-hidden" onsubmit="this.querySelector('button[type=submit]').disabled = true;">
+            {% csrf_token %}
+            
+            <div class="p-6 md:p-8">
+                
+                <h3 class="text-sm font-bold text-primary_dark border-b border-gray-100 pb-2 mb-6"><i class="fa-solid fa-ticket text-primary mr-2"></i>Coupon Details</h3>
+                
+                <div class="space-y-6">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Coupon Code <span class="text-red-500">*</span></label>
+                            <div class="relative flex items-center">
+                                <input type="text" id="coupon_code" name="code" required maxlength="20" class="w-full border border-gray-300 rounded-md p-3 uppercase font-bold text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="e.g. FESTIVAL20">
+                                <button type="button" id="generate-btn" class="absolute right-2 bg-blue-50 hover:bg-blue-100 text-primary px-3 py-1.5 rounded text-xs font-semibold transition" title="Generate Random Code">
+                                    <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Generate
+                                </button>
+                            </div>
+                            <p class="text-[10px] text-gray-400 mt-1">Customers will enter this code at checkout.</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Discount Type <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <select name="discount_type" id="discount_type" required class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors appearance-none bg-white">
+                                    <option value="percentage">Percentage (%)</option>
+                                    <option value="fixed">Fixed Amount (₹)</option>
+                                </select>
+                                <i class="fa-solid fa-angle-down absolute right-4 top-3.5 text-gray-400 pointer-events-none"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Discount Value <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <span id="value-prefix" class="absolute left-4 top-3 text-gray-500 font-semibold hidden">₹</span>
+                                <input type="number" id="discount_value" name="discount_value" required min="0.01" step="0.01" class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="0">
+                                <span id="value-suffix" class="absolute right-4 top-3 text-gray-500 font-bold">%</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Minimum Purchase Amount (₹)</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-3 text-gray-500 font-semibold">₹</span>
+                                <input type="number" name="min_purchase" min="0" step="0.01" value="0" class="w-full border border-gray-300 rounded-md p-3 pl-8 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" placeholder="0">
+                            </div>
+                            <p class="text-[10px] text-gray-400 mt-1">Leave as 0 for no minimum cart value.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Valid From <span class="text-red-500">*</span></label>
+                            <input type="datetime-local" id="valid_from" name="valid_from" required class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors bg-white">
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Valid Until <span class="text-red-500">*</span></label>
+                            <input type="datetime-local" id="valid_to" name="valid_to" required class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors bg-white">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-gray-100 pt-6">
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">Total Usage Limit <span class="text-red-500">*</span></label>
+                            <input type="number" name="usage_limit" required min="1" value="100" class="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+                            <p class="text-[10px] text-gray-400 mt-1">How many times can this code be used in total across all customers?</p>
+                        </div>
+
+                        <div class="flex flex-col justify-center">
+                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-3">Coupon Status</label>
+                            <div class="flex items-center">
+                                <div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+                                    <input type="checkbox" name="is_active" id="is_active" checked class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                    <label for="is_active" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                                </div>
+                                <label for="is_active" class="text-sm text-gray-700 font-semibold cursor-pointer">Active and Ready to Use</label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-6 border-t border-gray-200 flex flex-col-reverse sm:flex-row items-center justify-end gap-3">
+                <a href="#" class="w-full sm:w-auto px-6 py-2.5 text-center text-sm font-semibold text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-100 transition">
+                    Cancel
+                </a>
+                <button type="submit" class="w-full sm:w-auto px-8 py-2.5 text-sm font-bold text-white bg-primary rounded-md shadow hover:bg-opacity-90 transition active:scale-[0.98] flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Save Coupon
+                </button>
+            </div>
+
+        </form>
+
+    </main>
+
+   {% include 'seller/footer.html' %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // 1. Dynamic Prefix/Suffix for Discount Value based on Type
+            const typeSelect = document.getElementById('discount_type');
+            const valueInput = document.getElementById('discount_value');
+            const prefix = document.getElementById('value-prefix');
+            const suffix = document.getElementById('value-suffix');
+
+            typeSelect.addEventListener('change', function() {
+                if (this.value === 'percentage') {
+                    prefix.classList.add('hidden');
+                    suffix.classList.remove('hidden');
+                    valueInput.classList.remove('pl-8');
+                    // Add max value restriction for percentage
+                    valueInput.setAttribute('max', '100');
+                } else {
+                    prefix.classList.remove('hidden');
+                    suffix.classList.add('hidden');
+                    valueInput.classList.add('pl-8');
+                    // Remove max value restriction for fixed amount
+                    valueInput.removeAttribute('max');
+                }
+            });
+
+            // 2. Auto-Generate Random Coupon Code
+            const generateBtn = document.getElementById('generate-btn');
+            const codeInput = document.getElementById('coupon_code');
+
+            generateBtn.addEventListener('click', function() {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                let result = '';
+                // Generate a 10 character code
+                for (let i = 0; i < 10; i++) {
+                    result += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                codeInput.value = result;
+                
+                // Small animation effect on button to show it worked
+                const originalHtml = this.innerHTML;
+                this.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Done';
+                this.classList.replace('bg-blue-50', 'bg-green-50');
+                this.classList.replace('text-primary', 'text-green-600');
+                
+                setTimeout(() => {
+                    this.innerHTML = originalHtml;
+                    this.classList.replace('bg-green-50', 'bg-blue-50');
+                    this.classList.replace('text-green-600', 'text-primary');
+                }, 1000);
+            });
+
+            // 3. Basic Date Validation (Ensure "To" is after "From")
+            const fromDate = document.getElementById('valid_from');
+            const toDate = document.getElementById('valid_to');
+
+            fromDate.addEventListener('change', function() {
+                // Set the minimum selectable date on the "To" field 
+                // to be whatever was selected in the "From" field
+                toDate.min = this.value;
+                
+                // If the user already selected a "To" date that is now invalid, clear it
+                if (toDate.value && toDate.value < this.value) {
+                    toDate.value = '';
+                }
+            });
+            
+            // Set minimum date to today for the "From" field on page load
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            fromDate.min = now.toISOString().slice(0,16);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+
+from django.urls import path
+from custom_admin import views
+
+urlpatterns = [
+
+    path('admin_dashboard/',views.admin_dashboard,name='admin_dashboard'),
+    path('pending_products/',views.admin_pending_products,name='pending_products'),
+    path('product_view/',views.products_view,name='product_view'),
+    path('seller_view/',views.seller_view,name='seller_view'),
+    path('order_view/',views.order_view,name='order_view'),
+    path('user_view/',views.user_view,name='user_view'),
+    path('add_category/',views.add_category,name='add_category'),
+    path('category_list/',views.category_list,name='category_list'),
+    path('delete_category/<int:id>/',views.delete_category,name='delete_category'),
+    path('update_category/<int:id>/',views.update_category,name='update_category'),
+    path('deactivate_category/<int:id>/',views.deactivate_category,name='deactivate_category'),
+    path('add_subcategory/',views.add_subcategory,name='add_subcategory'),
+    path('subcategory_list/',views.subcategory_list,name='subcategory_list'),
+    path('update_subcategory/<int:id>/',views.update_subcategory,name='update_subcategory'),
+    path('delete_subcategory/<int:id>/',views.delete_subcategory,name='delete_subcategory'),
+    path('edit_product/<int:id>',views.edit_product,name='edit_product'),
+    path('delete_product/<int:id>/',views.delete_product,name='delete_product'),
+    path('order_details/<int:id>/',views.order_details,name='order_details'),
+    path('delete_order/<int:id>/',views.delete_order,name='delete_order'),
+    path('seller_detail/<int:id>',views.seller_details,name='seller_details'),
+    path('deactivate_seller/<int:id>/',views.deactivate_seller,name='deactivate_seller'),
+    path('pending_seller',views.pending_seller,name='pending_seller'),
+    path('approve_seller/<int:id>/',views.approve_seller,name='approve_seller'),
+    path('approve_products/<int:id>/',views.approve_products,name='approve_products'),
+    path('reject_products/<int:id>/',views.reject_products,name='reject_products'),
+    path('deactivate_user/<int:id>/',views.deactivate_user,name='deactivate_user'),
+    path('deactive_category_list/',views.deactive_category_list,name='deactive_category_list'),
+    path('deactive_subcategory_list/',views.deactive_subcategory_list,name='deactive_subcategory_list'),
+    path('deactivate_subcategory/<int:id>/',views.deactivate_subcategory,name='deactivate_subcategory'),
+    path('reapprove_subcategory/<int:id>/',views.reapprove_subcategory,name='reapprove_subcategory'),
+    path('reapprove_category/<int:id>/',views.reapprove_category,name='reapprove_category'),
+    path('deactivate_product/<int:id>/',views.deactivate_product,name='deactivate_product'),
+    path('deactive_product_list',views.deactive_product_list,name='deactive_product_list'),
+    path('reapprove_product/<int:id>/',views.reapprove_product,name='reapprove_product'),
+    path('deactive_user_list',views.deactive_user_list,name='deactive_user_list'),
+    path('reapprove_user/<int:id>/',views.reapprove_user,name='reapprove_user'),
+    path('deactive_seller_list',views.deactive_seller_list,name='deactive_seller_list'),
+     path('reapprove_seller/<int:id>/',views.reapprove_seller,name='reapprove_seller'),
+
+]

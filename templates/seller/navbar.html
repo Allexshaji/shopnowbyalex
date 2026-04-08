@@ -1,0 +1,30 @@
+<nav class="bg-primary_dark sticky top-0 z-50 shadow-md">
+    <div class="container mx-auto px-4 py-3 md:h-16 flex flex-wrap items-center justify-between gap-y-3">
+        
+        <a href="{% url 'seller_home' %}" class="flex items-center gap-2 order-1" aria-label="FlipShop Seller Hub Home">
+            <div class="w-8 h-8 bg-highlight rounded flex items-center justify-center text-primary_dark font-bold text-xl italic">F</div>
+            <span class="text-white font-bold text-lg tracking-wide hidden sm:block">
+                FlipShop <span class="text-xs font-normal text-highlight ml-1">Seller Hub</span>
+            </span>
+        </a>
+
+        <div class="flex items-center gap-4 md:gap-5 text-white font-medium text-sm order-2 md:order-3 ml-auto md:ml-0">
+            <a href="{% url 'message' %}" class="flex items-center gap-2 cursor-pointer relative hover:text-highlight transition" aria-label="View Messages (5 unread)">
+                <i class="fa-solid fa-bell text-lg" aria-hidden="true"></i>
+                <span class="absolute -top-2 -right-2 bg-highlight text-primary_dark text-[10px] font-bold px-1.5 rounded-full border border-primary_dark">5</span>
+            </a>
+        </div>
+
+        <div class="w-full md:flex-1 md:w-auto md:mx-4 order-3 md:order-2">
+            <form action="/your-search-endpoint" method="GET" class="relative group">
+                <input type="text" name="q" placeholder="Search your products, orders, or discounts..." 
+                       aria-label="Search"
+                       class="w-full h-10 md:h-9 px-4 rounded-sm text-sm focus:outline-none focus:ring-2 focus:ring-accent shadow-sm transition-all text-black">
+                <button type="submit" class="absolute right-0 top-0 h-10 md:h-9 w-12 md:w-10 text-primary font-bold" aria-label="Submit Search">
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                </button>
+            </form>
+        </div>
+
+    </div>
+</nav>

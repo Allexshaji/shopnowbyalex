@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipShop - Inventory</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary_dark: '#362F4F',
+                        primary: '#5B23FF',
+                        accent: '#008BFF',
+                        highlight: '#E4FF30',
+                        bg_light: '#F8F9FA',
+                        text_dark: '#212121',
+                        text_gray: '#878787'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 2px 10px rgba(0, 0, 0, 0.04)',
+                        'hover': '0 12px 25px rgba(0, 0, 0, 0.1)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="text-text_dark flex flex-col min-h-screen">
+
+        {% include 'seller/navbar.html' %}
+
+    <main class="flex-1 container mx-auto px-2 sm:px-4 py-6 md:py-8">
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-text_dark">Inventory Dashboard</h1>
+                <p class="text-sm text-text_gray mt-1">Manage your active listings.</p>
+            </div>
+            <div class="flex gap-3">
+                <button class="border-2 border-accent text-accent hover:bg-accent hover:text-white px-4 py-2 rounded-md font-semibold text-sm transition">
+                    Export CSV
+                </button>
+                <a href="{% url 'seller_add_product' %}" class="bg-highlight text-primary_dark hover:bg-yellow-400 px-4 py-2 rounded-md font-bold text-sm transition shadow-sm flex items-center">
+                    + Add Product
+                </a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
+            
+            {% for product in products %}
+            <div class="bg-white rounded-xl shadow-soft hover:shadow-hover hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden relative group">
+                
+                {% if product.stock > 5 %}
+                <span class="absolute top-2 left-2 bg-white/90 text-green-600 text-[10px] font-bold px-2 py-0.5 rounded shadow-sm z-10 border border-gray-100">
+                    Stock: {{ product.stock }}
+                </span>
+                {% else %}
+                <span class="absolute top-2 left-2 bg-red-50 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded shadow-sm z-10 border border-red-100">
+                    Low Stock: {{ product.stock }}
+                </span>
+                {% endif %}
+                
+                {% if product.status == 'pending' %}
+                <span class="absolute top-2 right-2 bg-yellow-100 text-yellow-700 text-[10px] font-bold px-2 py-0.5 rounded shadow-sm z-10">
+                    Pending
+                </span>
+                {% elif product.status == 'rejected' %}
+                <span class="absolute top-2 right-2 bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded shadow-sm z-10">
+                    Rejected
+                </span>
+                {% endif %}
+
+                <div class="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden">
+                    {% if product.get_primary_image %}
+                        <img src="{{ product.get_primary_image.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition duration-500">
+                    {% else %}
+                        <img src="https://placehold.co/400x400/e2e8f0/878787?text=No+Image" alt="No image" class="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition duration-500">
+                    {% endif %}
+                </div>
+
+                <div class="p-3 md:p-4 flex flex-col flex-grow">
+                    
+                    <div class="mb-auto">
+                        {% if product.category %}
+                        <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">{{ product.category.name }}</p>
+                        {% endif %}
+
+                        <h3 class="text-sm font-semibold text-text_dark line-clamp-2 leading-snug mb-1.5 group-hover:text-primary transition">
+                            {{ product.name }}
+                        </h3>
+                        
+                        <div class="flex items-center gap-1.5 mb-3">
+                            <div class="flex items-center text-yellow-400">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= product.avg_rating %}
+                                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current" viewBox="0 0 24 24">
+                                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                                </svg>
+                                {% else %}
+                                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current text-gray-200" viewBox="0 0 24 24">
+                                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                                </svg>
+                                {% endif %}
+                            {% endfor %}
+                            </div>
+                            <span class="text-[10px] sm:text-xs font-medium text-gray-500 pt-0.5">({{ product.review_count }})</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-end flex-wrap gap-x-2 gap-y-1 mb-4 mt-3">
+                        <span class="text-base md:text-lg font-bold text-text_dark">₹{{ product.discount_price }}</span>
+                        {% if product.price > product.discount_price %}
+                            <span class="text-xs text-text_gray line-through mb-0.5">₹{{ product.price }}</span>
+                            <span class="text-xs font-bold text-green-600 mb-0.5 ml-auto md:ml-0">Discounted</span>
+                        {% endif %}
+                    </div>
+
+                    <a href="{% url 'seller_product_view' product.slug %}" class="w-full text-center bg-primary text-white py-2 rounded-md text-sm font-semibold hover:bg-opacity-90 transition block">
+                        Edit Listing
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full text-center py-10">
+                <i class="fa-solid fa-box-open text-4xl text-gray-300 mb-3"></i>
+                <p class="text-gray-500 font-medium">No products found in your inventory.</p>
+                <a href="{% url 'seller_add_product' %}" class="text-primary hover:underline mt-2 inline-block">Add your first product</a>
+            </div>
+            {% endfor %}   
+            
+        </div>
+    </main>
+    {% include 'seller/footer.html' %}
+
+</body>
+</html>

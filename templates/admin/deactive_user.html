@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | Deactivated Users</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style type="text/tailwindcss">
+        @layer components {
+            .table-head {
+                @apply px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest bg-slate-50 border-b border-slate-200;
+            }
+            .btn-icon {
+                @apply w-9 h-9 flex items-center justify-center rounded-lg border transition-all duration-200 shadow-sm;
+            }
+            .badge-inactive { 
+                @apply px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border bg-rose-50 text-rose-600 border-rose-100; 
+            }
+            .btn-secondary {
+                @apply inline-flex items-center gap-2 px-4 py-2 bg-white text-slate-600 border border-slate-200 text-sm font-bold rounded-xl hover:bg-slate-50 transition-all;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-[#f8fafc] text-slate-900 antialiased font-sans">
+
+<div class="flex min-h-screen">
+
+    <aside class="w-64 flex-shrink-0 border-r border-slate-200 bg-white">
+        {% include 'admin/admin_navbar.html' %}
+    </aside>
+
+    <main class="flex-1 p-6 lg:p-10">
+
+        <div class="max-w-7xl mx-auto">
+
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                <div>
+                    <h1 class="text-3xl font-black tracking-tight text-slate-900">Deactivated Users</h1>
+                    <p class="text-slate-500">Manage accounts that have been restricted or disabled.</p>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <a href="{% url 'user_view' %}" class="btn-secondary">
+                        <i class="fas fa-arrow-left text-xs"></i>
+                        Back to Active Users
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead>
+                            <tr>
+                                <th class="table-head">User Details</th>
+                                <th class="table-head">Email</th>
+                                <th class="table-head">Date Joined</th>
+                                <th class="table-head">Status</th>
+                                <th class="table-head text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 bg-white">
+                            {% for u in user %}
+                            <tr class="group hover:bg-slate-50/50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="h-10 w-10 flex-shrink-0 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200">
+                                            <i class="fas fa-user text-slate-400"></i>
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-bold text-slate-900">{{ u.username }}</div>
+                                            <div class="text-[11px] text-slate-400 font-mono">ID: #{{ u.id }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-slate-600">
+                                    {{ u.email }}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-slate-500">
+                                    {{ u.date_joined|date:"M d, Y" }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="badge-inactive">Deactivated</span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        
+                                        <form action="{% url 'reapprove_user' u.id %}" method="POST" class="inline" onclick="return confirm('Restore access for this user?')">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn-icon bg-white text-slate-400 border-slate-200 hover:text-emerald-600 hover:border-emerald-200" title="Reactivate Account">
+                                                <i class="fas fa-user-check text-[10px]"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-24">
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                                            <i class="fas fa-user-shield text-slate-200 text-3xl"></i>
+                                        </div>
+                                        <p class="text-slate-400 font-medium text-lg">No deactivated users found</p>
+                                        <p class="text-slate-300 text-sm">All user accounts are currently active.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

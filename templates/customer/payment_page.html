@@ -1,0 +1,33 @@
+<body class="bg-[#362F4F] flex items-center justify-center min-h-screen">
+    <div class="text-center text-white">
+        <h1 class="text-2xl font-bold mb-4">Initializing Secure Payment...</h1>
+        <p class="opacity-70">Please do not refresh the page.</p>
+    </div>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+    var options = {
+        "key": "{{ razorpay_key_id }}",
+        "amount": "{{ amount }}",
+        "currency": "INR",
+        "name": "ShopNow",
+        "description": "Payment for Order #{{ order.id }}",
+        "order_id": "{{ razorpay_order_id }}",
+        "handler": function (response){
+            // Success! Redirect to your success view
+            window.location.href = `/payment-success/?order_id={{ order.id }}&payment_id=` + response.razorpay_payment_id;
+        },
+        "prefill": {
+            "email": "{{ user_email }}",
+            "contact": "{{ user_phone }}"
+        },
+        "theme": { "color": "#5B23FF" }
+    };
+    var rzp1 = new Razorpay(options);
+    
+    // Auto-open the popup on page load
+    window.onload = function() {
+        rzp1.open();
+    };
+    </script>
+</body>

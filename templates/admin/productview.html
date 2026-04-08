@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | Product Inventory</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style type="text/tailwindcss">
+        @layer components {
+            .table-head {
+                @apply px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-widest bg-slate-50 border-b border-slate-200;
+            }
+            .btn-icon {
+                @apply w-9 h-9 flex items-center justify-center rounded-lg border transition-all duration-200 shadow-sm;
+            }
+            .badge-active { 
+                @apply px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border bg-emerald-50 text-emerald-700 border-emerald-100; 
+            }
+            .badge-inactive { 
+                @apply px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border bg-rose-50 text-rose-600 border-rose-100; 
+            }
+            .btn-primary {
+                @apply inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100;
+            }
+            .btn-secondary {
+                @apply inline-flex items-center gap-2 px-4 py-2 bg-white text-slate-600 border border-slate-200 text-sm font-bold rounded-xl hover:bg-slate-50 transition-all;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-[#f8fafc] text-slate-900 antialiased font-sans">
+
+<div class="flex min-h-screen">
+
+    <aside class="w-64 flex-shrink-0 border-r border-slate-200 bg-white">
+        {% include 'admin/admin_navbar.html' %}
+    </aside>
+
+    <main class="flex-1 p-6 lg:p-10">
+
+        <div class="max-w-7xl mx-auto">
+
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                <div>
+                    <h1 class="text-3xl font-black tracking-tight text-slate-900">Product Inventory</h1>
+                    <p class="text-slate-500">View and manage all your store products in one place.</p>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <a href="{% url 'deactive_product_list' %}" class="btn-secondary">
+                        <i class="fas fa-eye-slash text-xs"></i>
+                        Deactivated List
+                    </a>
+                  
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <span class="text-slate-400 text-xs font-bold uppercase tracking-widest">Total Items</span>
+                    <h3 class="text-2xl font-black mt-1">{{ products|length }}</h3>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <span class="text-slate-400 text-xs font-bold uppercase tracking-widest">Active List</span>
+                    <h3 class="text-2xl font-black mt-1 text-emerald-500">{{ active_count|default:"Live" }}</h3>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <span class="text-slate-400 text-xs font-bold uppercase tracking-widest">Deactivated</span>
+                    <h3 class="text-2xl font-black mt-1 text-rose-500">{{ inactive_count|default:"Hidden" }}</h3>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <thead>
+                            <tr>
+                                <th class="table-head">Product</th>
+                                <th class="table-head">Category</th>
+                                <th class="table-head">Price</th>
+                                <th class="table-head">Status</th>
+                                <th class="table-head text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 bg-white">
+                            {% for p in products %}
+                            <tr class="group hover:bg-slate-50/50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="h-12 w-12 flex-shrink-0 rounded-lg overflow-hidden border border-slate-100">
+                                            <img class="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300" 
+                                                 src="{{ p.image.url|default:'https://via.placeholder.com/150' }}" 
+                                                 alt="{{ p.name }}">
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-bold text-slate-900">{{ p.name }}</div>
+                                            <div class="text-[11px] text-slate-400 font-mono">SKU: #{{ p.id }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-slate-600">
+                                    {{ p.category }}
+                                </td>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-900">
+                                    ${{ p.price }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    {% if p.is_active %}
+                                        <span class="badge-active">Live</span>
+                                    {% else %}
+                                        <span class="badge-inactive">Deactivated</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        
+                                        <a href="{% url 'edit_product' p.id %}" 
+                                           class="btn-icon bg-white text-slate-400 border-slate-200 hover:text-indigo-600 hover:border-indigo-200"
+                                           title="Edit Product">
+                                            <i class="fas fa-pen text-[10px]"></i>
+                                        </a>
+
+                                        {% if p.is_active %}
+                                        <form action="{% url 'deactivate_product' p.id %}" method="POST" class="inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn-icon bg-white text-slate-400 border-slate-200 hover:text-rose-600 hover:border-rose-200" title="Deactivate">
+                                                <i class="fas fa-power-off text-[10px]"></i>
+                                            </button>
+                                        </form>
+                                     
+                                     
+                                        {% endif %}
+
+                                        <form action="{% url 'delete_product' p.id %}" method="POST" class="inline" onclick="return confirm('Permanently delete this product?')">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn-icon bg-white text-slate-400 border-slate-200 hover:text-slate-900 hover:border-slate-900">
+                                                <i class="fas fa-trash-can text-[10px]"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-24">
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                                            <i class="fas fa-box-open text-slate-200 text-3xl"></i>
+                                        </div>
+                                        <p class="text-slate-400 font-medium text-lg">Your inventory is empty</p>
+                                        <!-- <a href="{% url 'add_product' %}" class="mt-2 text-indigo-600 font-bold hover:underline">Add your first product</a> -->
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

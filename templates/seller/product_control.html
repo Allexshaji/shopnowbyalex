@@ -1,0 +1,99 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlipShop - Product Management</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary_dark: '#362F4F',
+                        primary: '#5B23FF',
+                        accent: '#008BFF',
+                        highlight: '#E4FF30',
+                        bg_light: '#F1F3F6',
+                        text_dark: '#212121',
+                        text_gray: '#878787'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F1F3F6; }
+        .card-shadow { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+        .hover-shadow:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.12); transform: translateY(-4px); transition: all 0.3s ease; }
+    </style>
+</head>
+<body class="text-text_dark min-h-screen flex flex-col">
+
+        {% include 'seller/navbar.html' %}
+
+    <main class="flex-1 container mx-auto max-w-6xl p-6 mt-4 md:mt-8">
+        
+        <div class="mb-8 text-center md:text-left">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Inventory Management</h1>
+            <p class="text-sm text-gray-500 mt-2">Manage your listings, add new products, and track approval statuses.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            
+            <a href="{% url 'seller_add_product' %}" class="bg-white rounded-xl p-8 card-shadow hover-shadow border-t-4 border-primary flex flex-col items-center text-center group cursor-pointer transition-all">
+                <div class="w-16 h-16 rounded-full bg-blue-50 text-accent flex items-center justify-center text-2xl mb-5 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Add New Product</h3>
+                <p class="text-sm text-gray-500">Create a new listing for your store's inventory.</p>
+            </a>
+
+            <a href="{% url 'inventory' %}" class="bg-white rounded-xl p-8 card-shadow hover-shadow border-t-4 border-green-500 flex flex-col items-center text-center group cursor-pointer transition-all">
+                <div class="w-16 h-16 rounded-full bg-green-50 text-green-500 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 group-hover:bg-green-500 group-hover:text-white transition-all">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">View All Products</h3>
+                <div class="flex items-center gap-2 text-sm text-gray-500 bg-gray-50 px-3 py-1 rounded-full mt-1">
+                    <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                    <span class="font-bold text-text_dark">236</span> Active Listings
+                </div>
+            </a>
+
+            <a href="{% url 'seller_pending_approval' %}" class="bg-white rounded-xl p-8 card-shadow hover-shadow border-t-4 border-highlight flex flex-col items-center text-center group cursor-pointer transition-all relative overflow-hidden">
+                <div class="absolute top-4 right-4 bg-highlight text-primary_dark text-xs font-bold px-2.5 py-1 rounded shadow-sm">
+                    12 Pending
+                </div>
+                <div class="w-16 h-16 rounded-full bg-yellow-50 text-yellow-600 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 group-hover:bg-highlight group-hover:text-primary_dark transition-all">
+                    <i class="fa-solid fa-hourglass-half"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Review Pending</h3>
+                <p class="text-sm text-gray-500">Check the status of items currently under review.</p>
+            </a>
+
+            <a href="{% url 'reject_product' %}" class="bg-white rounded-xl p-8 card-shadow hover-shadow border-t-4 border-red-500 flex flex-col items-center text-center group cursor-pointer transition-all relative overflow-hidden">
+                <div class="absolute top-4 right-4 bg-red-100 text-red-600 text-xs font-bold px-2.5 py-1 rounded shadow-sm">
+                    3 Rejected
+                </div>
+                <div class="w-16 h-16 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 group-hover:bg-red-500 group-hover:text-white transition-all">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Rejected Products</h3>
+                <p class="text-sm text-gray-500">Review and update items that were not approved.</p>
+            </a>
+
+        </div>
+    </main>
+    {% include 'seller/footer.html' %}
+</body>
+</html>
