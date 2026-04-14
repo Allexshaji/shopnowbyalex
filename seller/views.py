@@ -18,7 +18,7 @@ from django.core.paginator import Paginator
 User = get_user_model()
 
 
-def register(request):
+def registration(request):
     if request.method=='POST':
         email=request.POST.get('email')
         password=request.POST.get('password')
@@ -48,7 +48,7 @@ def register(request):
                 )
         messages.success(request,'succesfully created seller account')
         return redirect('seller_login')     
-    return render(request,"seller/register.html")
+    return render(request,"seller/registration.html")
 
 # def seller_login(request):
 #     if request.method == "POST":
