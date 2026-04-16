@@ -11,6 +11,7 @@ from .decorators import seller_required
 from django.http import JsonResponse
 from custom_admin.models import Coupon
 from django.core.paginator import Paginator
+from django.db.models import Q
 
 
 
@@ -18,16 +19,16 @@ from django.core.paginator import Paginator
 User = get_user_model()
 
 
-def register(request):
+def registration(request):
     if request.method=='POST':
         email=request.POST.get('email')
         password=request.POST.get('password')
         if User.objects.filter(email=email).exists():
             messages.error(request,'email already registered')
-            return redirect('seller_registration')
+            return redirect('registration')
         if password!=request.POST.get('confirm_password'):
             messages.error(request,'password in not matched')
-            return redirect('seller_registration')
+            return redirect('registration')
         user=User.objects.create_user(
             username=email,
             email=email,
@@ -47,32 +48,10 @@ def register(request):
                 shop_logo=request.FILES.get('shop_logo')      
                 )
         messages.success(request,'succesfully created seller account')
-        return redirect('seller_login')     
-    return render(request,"seller/register.html")
+        return redirect('user_login')     
+    return render(request,"seller/registration.html")
 
-# def seller_login(request):
-#     if request.method == "POST":
-#         email = request.POST.get('seller_email')
-#         password = request.POST.get('seller_password')
 
-#         user = authenticate(request, username=email, password=password)
-
-#         if user is None:
-#             messages.error(request, "Invalid email or password")
-#             return redirect('seller_login')
-
-#        
-
-#         sellerprofile = user.seller_profile
-
-#         if not sellerprofile.approved:
-#             messages.error(request, "Your seller account is waiting for admin approval")
-#             return redirect('seller_login')
-
-#         login(request, user)
-#         return redirect('seller_home')
-
-#     return render(request, "seller/seller_login.html")
 def seller_logout(request):
      logout(request)
      return redirect('user_login')
@@ -345,7 +324,14 @@ def seller_password(request):
 @seller_required
 def seller_orders(request):
     seller=SellerProfile.objects.get(user=request.user)
-    orders=Order.objects.filter(orderitem__product__seller=seller)
+    orders=Order.objects.filter(orderitem__product__seller=seller).distinct()
+    query=request.GET.get('q')
+    if query:
+        orders=orders.filter(
+            Q(id__icontains=query)|
+            Q(orderitem__product__name=query)|
+            Q(orderitem__order__address__full_name=query)
+        ).distinct()
     return render(request,"seller/seller_orders.html",{'orders':orders})
 
 @seller_required
@@ -363,16 +349,38 @@ def seller_order_status(request,id):
     return redirect('seller_orders')
 
 def pending_order(request):
-    order=Order.objects.filter(status ="pending")
+    seller=SellerProfile.objects.get(user=request.user)
+    order=Order.objects.filter(status ="pending",orderitem__product__seller=seller).distinct()
+    query=request.GET.get('q')
+    if query:
+        order=order.filter(
+            Q(id__icontains=query)|
+            Q(orderitem__product__name=query)|
+            Q(orderitem__order__address__full_name=query)
+            )
     return render(request,"seller/pending_order.html",{'order':order})
 
 def ongoing_order(request):
-    order=Order.objects.filter(status ="shipped")
-    return render(request,"seller/ongoing_order.html",{'order':order})
+    seller=SellerProfile.objects.get(user=request.user)
+    order=Order.objects.filter(status =["shipped","processing"],orderitem__product__seller=seller).distinct()
+    query=request.GET.get('q')
+    if query:
+        order=order.filter(
+            Q(id__icontains=query)|
+            Q(orderitem__product__name=query)|
+            Q(orderitem__order__address__full_name=query)
+            )
 
 def finished_order(request):
-    order=Order.objects.filter(status="delivered")
-    return render(request,'seller/finished_order.html',{'order':order})
+    seller=SellerProfile.objects.get(user=request.user)
+    order=Order.objects.filter(status =["deliveried","cancelled"],orderitem__product__seller=seller).distinct()
+    query=request.GET.get('q')
+    if query:
+        order=order.filter(
+            Q(id__icontains=query)|
+            Q(orderitem__product__name=query)|
+            Q(orderitem__order__address__full_name=query)
+            )
 
 @seller_required
 def pending_single(request,slug):
