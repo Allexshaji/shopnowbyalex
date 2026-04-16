@@ -48,6 +48,7 @@ def registration(request):
                 shop_logo=request.FILES.get('shop_logo')      
                 )
         messages.success(request,'succesfully created seller account')
+
         return redirect('user_login')     
     return render(request,"seller/registration.html")
 
