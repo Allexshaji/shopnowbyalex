@@ -15,6 +15,7 @@ def user_login(request):
         if user:
             if user.role == 'customer':
                 login(request, user)
+                messages.success(request,"login successfully")
                 return redirect('home')
             
 
@@ -27,15 +28,13 @@ def user_login(request):
                     return redirect('user_login')
 
                 login(request, user)
+                messages.success(request,"login successfully")
                 return redirect('seller_home')
-        if user.role != 'seller':
-                messages.error(request, "You are not a seller")
-                return redirect('user_login')
-        if user.role != 'customer':
-                messages.error(request, "You are not a customer")
-                return redirect('user_login')        
         if user is None:
-            messages.error(request, "Invalid email or password")
-            return redirect('user_login')    
+                messages.error(request, "invalid email or password")
+                return redirect('user_login')
+           
+        
+   
     return render(request, 'core/login.html')
         
