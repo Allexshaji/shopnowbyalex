@@ -96,7 +96,7 @@ WSGI_APPLICATION = 'project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'shopnow-db',   # RDS DB name
+        'NAME': 'shopnow',   # RDS DB name
         'USER': 'admin',        # RDS master username
         'PASSWORD': 'sonaalex123',    # RDS password
         'HOST': 'shopnow-db.c7a06sw4u9es.ap-southeast-2.rds.amazonaws.com',  # IMPORTANT
