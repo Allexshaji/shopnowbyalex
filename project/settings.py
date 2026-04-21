@@ -95,8 +95,15 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'shopnow-db',   # RDS DB name
+        'USER': 'admin',        # RDS master username
+        'PASSWORD': 'sonaalex123',    # RDS password
+        'HOST': 'shopnow-db.c7a06sw4u9es.ap-southeast-2.rds.amazonaws.com',  # IMPORTANT
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        }
     }
 }
 
