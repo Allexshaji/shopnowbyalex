@@ -111,8 +111,11 @@
                                 <td class="px-4 py-4 align-top">
                                     <span class="text-sm font-bold text-primary_dark">#ORD{{ order.id }}</span>
                                     <p class="text-[11px] text-gray-500 mt-1">{{ order.created_at|date:"M d, g:i A" }}</p>
-                                    <span class="mt-2 inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-700">
-                                        Shipped
+                                    <span class="mt-2 inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider 
+                                        {% if order.status == 'processing' %}bg-blue-100 text-blue-700
+                                        {% elif order.status == 'shipped' or order.status == 'returned' %}bg-yellow-100 text-yellow-700
+                                        {% else %}bg-gray-100 text-gray-700{% endif %}">
+                                        {{ order.status|default:"processing" }}
                                     </span>
                                 </td>
                                 

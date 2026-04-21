@@ -12,6 +12,7 @@ from django.http import JsonResponse
 from custom_admin.models import Coupon
 from django.core.paginator import Paginator
 from django.db.models import Q
+from datetime import date
 
 
 
@@ -59,10 +60,12 @@ def seller_logout(request):
 
 @seller_required
 def seller_home(request):
-    seller=request.user
-    sellerprofile=seller.seller_profile
-    products=Product.objects.filter(seller=sellerprofile,status='approved') 
-    return render(request, "seller/seller_home.html",{'sellerprofile':sellerprofile,'product':products})  
+    seller=SellerProfile.objects.get(user=request.user)
+    products=Product.objects.filter(seller=seller,status='approved')
+    orders=Order.objects.filter(orderitem__product__seller=seller).distinct()
+    pending_orders=orders.filter(status="pending").count()
+    todays_sales=orders.filter(status="delivered").count()    
+    return render(request, "seller/seller_home.html",{'sellerprofile':seller,'product':products, "pending_orders":pending_orders,"todays_sales":todays_sales})  
 
 @seller_required
 def seller_profile(request):
@@ -363,7 +366,7 @@ def pending_order(request):
 
 def ongoing_order(request):
     seller=SellerProfile.objects.get(user=request.user)
-    order=Order.objects.filter(status =["shipped","processing"],orderitem__product__seller=seller).distinct()
+    order=Order.objects.filter(status__in =["shipped","processing"],orderitem__product__seller=seller).distinct()
     query=request.GET.get('q')
     if query:
         order=order.filter(
@@ -371,10 +374,12 @@ def ongoing_order(request):
             Q(orderitem__product__name=query)|
             Q(orderitem__order__address__full_name=query)
             )
+    return render(request,"seller/ongoing_order.html",{'order':order})
+
 
 def finished_order(request):
     seller=SellerProfile.objects.get(user=request.user)
-    order=Order.objects.filter(status =["deliveried","cancelled"],orderitem__product__seller=seller).distinct()
+    order=Order.objects.filter(status__in =["delivered","cancelled"],orderitem__product__seller=seller).distinct()
     query=request.GET.get('q')
     if query:
         order=order.filter(
@@ -382,6 +387,8 @@ def finished_order(request):
             Q(orderitem__product__name=query)|
             Q(orderitem__order__address__full_name=query)
             )
+    return render(request,"seller/finished_order.html",{'order':order})
+        
 
 @seller_required
 def pending_single(request,slug):
@@ -425,6 +432,9 @@ def pending_edit(request,slug):
 
 def message(request):
     return render(request,'seller/message.html')
+
+def analytics(request):
+    return render(request,"seller/analytics.html")
 
 def coupon(request):
     return render(request,'seller/coupon.html')

@@ -32,6 +32,7 @@ urlpatterns = [
     path('pending_single/<str:slug>',views.pending_single,name='pending_single'),
     path('pending_edit/<str:slug>',views.pending_edit,name='pending_edit'),
     path('message',views.message,name='message'),
+    path('analytics',views.analytics,name='analytics'),
     path('coupon',views.coupon,name='coupon'),
     path('add_coupon',views.add_coupon,name='add_coupon'),
     path('coupon_active',views.coupon_active,name='coupon_active'),
