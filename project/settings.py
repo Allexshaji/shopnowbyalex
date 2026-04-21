@@ -28,7 +28,13 @@ SECRET_KEY = 'django-insecure-1tudm!+-*6o7hj%5(fdwm*pmpg@gmluf+hbvp29k@p2@o6@wy$
 DEBUG = True
 
 ALLOWED_HOSTS = [
+
+   
+    'shopnow.alexshaji.online',
     '3.27.9.235'
+    'localhost',
+    '127.0.0.1'
+
 ]
 
 
