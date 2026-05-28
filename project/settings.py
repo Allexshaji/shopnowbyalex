@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'seller',
     'customer',
     'custom_admin',
-    'core',
+    'core.apps.CoreConfig',
 ]
 
 MIDDLEWARE = [

@@ -37,14 +37,29 @@ def approve_products(request,id):
     products = Product.objects.get(id=id)
     products.status = 'approved'
     products.save()
+    
+    Notifications.objects.create(
+            user=products.seller.user,
+            title="Product Approved",
+            message="Admin approved your product"
+        )
     return redirect('pending_products')
 
 
 def reject_products(request,id):
-    products = Product.objects.get(id)
-    products.status = 'rejected'
-    products.save()
-    return redirect('pending_products')
+    if request.method=="POST":
+        
+        products = Product.objects.get(id=id)
+        products.status = 'rejected'
+        products.save()
+        
+        Notifications.objects.create(
+                user=products.seller.user,
+                title="Product Rejected",
+                message=request.POST.get('message')
+            )
+        return redirect('pending_products')
+    return render(request,'admin/reject_message.html')
 
 
 def products_view(request):
@@ -114,6 +129,7 @@ def order_view(request):
 
 def user_view(request):
     users = User.objects.all()
+   
     return render(request,'admin/userview.html',{'users':users})
 
 

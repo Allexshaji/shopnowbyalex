@@ -2,10 +2,10 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import login,authenticate,logout
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import get_user_model,update_session_auth_hash
-from .models import SellerProfile,SubCategory,Category,ProductImage,VerifiedDoc
+from .models import SellerProfile,SubCategory,Category,ProductImage,VerifiedDoc,Product,ProductAttribute
 from django.contrib import messages
 from django.utils.text import slugify
-from core.models import User, Product,ProductAttribute
+from core.models import User,Notifications
 from customer.models import Order,Reviews
 from .decorators import seller_required
 from django.http import JsonResponse
@@ -430,8 +430,12 @@ def pending_edit(request,slug):
         return redirect('pending_single',slug=product.slug)        
     return render(request,"seller/pending_edit.html",{'product':product,'subcategory':subcategory})
 
-def message(request):
-    return render(request,'seller/message.html')
+def seller_notifications(request):
+    notifications=Notifications.objects.filter(user=request.user).order_by('-created_at')
+    print("Logged user:", request.user)
+    print("Count:", notifications.count())
+
+    return render(request,'seller/notification.html',{'notifications':notifications})
 
 def analytics(request):
     return render(request,"seller/analytics.html")

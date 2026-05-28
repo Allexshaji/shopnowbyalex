@@ -2,8 +2,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from core.models import User
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.http import HttpResponse
-from core.models import Product
-from seller.models import Category, SubCategory, ProductImage
+from seller.models import Category, SubCategory, ProductImage,Product
 from django.contrib.auth.decorators import login_required
 from .models import Address, Cart, CartItem, WishList, Reviews, Order, OrderItem
 from .decorators import customer_required

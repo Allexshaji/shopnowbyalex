@@ -14,7 +14,7 @@ class Brand(models.Model):
 
 
 class ProductApproval(models.Model):
-    product = models.ForeignKey('core.Product',on_delete=models.CASCADE)
+    product = models.ForeignKey('seller.Product',on_delete=models.CASCADE)
     approved_by = models.ForeignKey('core.User',on_delete=models.SET_NULL,null=True) 
     status = models.CharField(max_length=20) 
     reviewed_at = models.DateTimeField(auto_now_add=True)

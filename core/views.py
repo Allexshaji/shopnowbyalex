@@ -18,6 +18,10 @@ def user_login(request):
                 messages.success(request,"login successfully")
                 return redirect('home')
             
+            
+            elif user.role=="admin":
+                login(request,user)
+                return redirect('admin_dashboard')
 
             elif user.role=="seller":
 

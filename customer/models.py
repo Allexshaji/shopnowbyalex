@@ -1,6 +1,9 @@
 from django.db import models
-from core.models import User, Product
+from seller.models import Product
 from decimal import Decimal
+from django.contrib.auth import get_user_model
+
+User=get_user_model()
 
 class Address(models.Model):
     user = models.ForeignKey('core.User', on_delete=models.CASCADE)
@@ -37,7 +40,7 @@ class Cart(models.Model):
     
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
-    product = models.ForeignKey('core.Product', on_delete=models.CASCADE)
+    product = models.ForeignKey('seller.Product', on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     price = models.IntegerField()
     added_at = models.DateTimeField(auto_now_add=True)
@@ -48,12 +51,12 @@ class CartItem(models.Model):
 
 class WishList(models.Model):
     user = models.ForeignKey('core.User', on_delete=models.CASCADE)
-    product = models.ForeignKey('core.Product', on_delete=models.CASCADE)
+    product = models.ForeignKey('seller.Product', on_delete=models.CASCADE)
     added_at = models.DateTimeField(auto_now_add=True)
 
 class Reviews(models.Model):
     user = models.ForeignKey('core.User', on_delete=models.CASCADE)
-    product = models.ForeignKey('core.Product', on_delete=models.CASCADE)
+    product = models.ForeignKey('seller.Product', on_delete=models.CASCADE)
     rating = models.IntegerField(default=0)
     comment = models.CharField(max_length=200, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
