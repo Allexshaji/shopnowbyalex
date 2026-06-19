@@ -37,6 +37,7 @@ def user_login(request):
         if user is None:
                 messages.error(request, "invalid email or password")
                 return redirect('user_login')
+        
            
         
    
